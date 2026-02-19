@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pass Parking - CHU Angers</title>
+    <!-- Tailwind CSS pour le style -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librairie Barcode -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 select-none">
+
+    <!-- WIDGET Parking -->
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-xl overflow-hidden border border-gray-200 font-sans transform transition hover:scale-[1.01] duration-300">
+        
+        <!-- En-tête CHU Angers -->
+        <div class="bg-[#0055a4] p-6 text-white text-center relative overflow-hidden">
+            <!-- Effet de fond subtil -->
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+            <div class="absolute top-10 -left-4 w-16 h-16 bg-blue-300 opacity-10 rounded-full blur-xl"></div>
+            
+            <h2 class="text-2xl font-black tracking-tighter relative z-10 uppercase">CHU d'Angers</h2>
+            <p class="text-blue-100 text-xs font-medium tracking-widest mt-1 relative z-10 uppercase">Accès aux Parkings</p>
+        </div>
+
+        <!-- Corps du Pass -->
+        <div class="p-6 flex flex-col items-center">
+            
+            <!-- Info Date Dynamique -->
+            <div class="text-center mb-6 w-full">
+                <p class="text-[10px] uppercase text-gray-400 font-bold tracking-wider mb-1">Date de validité</p>
+                <p class="text-4xl font-black text-gray-800 capitalize tracking-tight" id="dateDisplay">--/--</p>
+            </div>
+
+            <!-- Zone Code-Barres -->
+            <!-- Ajout d'un ID au conteneur pour pouvoir le modifier en cas d'erreur -->
+            <div id="barcodeContainer" class="w-full flex justify-center py-6 bg-white rounded-xl border border-gray-100 shadow-sm min-h-[100px]">
+                <svg id="barcode"></svg>
+            </div>
+
+            <!-- Instructions -->
+            <p id="instructionText" class="text-center text-gray-400 text-[10px] mt-6 px-8 leading-tight">
+                Scannez ce code à la barrière d'entrée du parking visiteurs.
+            </p>
+        </div>
+
+        <!-- Bas de carte -->
+        <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="relative flex h-2 w-2">
+                  <span id="statusPing" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span id="statusDot" class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </div>
+                <span id="statusText" class="text-[10px] font-bold text-gray-500 tracking-wide uppercase">Valide ce jour</span>
+            </div>
+            <span class="text-xs font-bold text-[#0055a4]">Accès aux Parkings</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. Gestion de l'affichage de la date ---
+            const now = new Date();
+            const options = { weekday: 'short', day: 'numeric', month: 'short' };
+            const dateStr = now.toLocaleDateString('fr-FR', options).replace('.', ''); 
+            document.getElementById('dateDisplay').textContent = dateStr;
+
+            // --- 2. Calcul du Code Valide pour AUJOURD'HUI ---
+            // POINT DE DÉPART (REF) : 19 Février 2026 = 0022461091
+            const referenceDate = new Date(2026, 1, 19); 
+            const referenceCode = 22461091; 
+
+            // Normaliser les dates à minuit
+            const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const refAtMidnight = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+
+            // Calcul du nombre de jours écoulés
+            const diffTime = todayAtMidnight - refAtMidnight;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            // Calcul du code théorique valide pour aujourd'hui
+            const calculatedNum = referenceCode + diffDays;
+            const validCodeForToday = String(calculatedNum).padStart(10, '0');
+
+            // --- 3. Vérification de Sécurité ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeInUrl = urlParams.get('code');
+            let isValid = true;
+
+            // Si un code est présent dans l'URL, on vérifie s'il correspond à la date du jour
+            if (codeInUrl) {
+                if (codeInUrl !== validCodeForToday) {
+                    isValid = false;
+                }
+            } else {
+                // Si pas de code dans l'URL, on met celui du jour par défaut (pour l'usage normal de l'app)
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.set('code', validCodeForToday);
+                window.history.replaceState(null, '', newUrl);
+            }
+
+            // --- 4. Affichage ou Blocage ---
+            if (isValid) {
+                // CAS VALIDE : On génère le code-barres
+                JsBarcode("#barcode", validCodeForToday, {
+                    format: "CODE128",
+                    lineColor: "#1f2937",
+                    width: 2.5,
+                    height: 80,
+                    displayValue: false, 
+                    margin: 0,
+                    background: "#ffffff"
+                });
+            } else {
+                // CAS INVALIDE : On bloque l'affichage
+                const container = document.getElementById('barcodeContainer');
+                
+                // Remplacement visuel du code-barres par une erreur
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-red-500 w-full h-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="font-bold text-sm tracking-wider">CODE EXPIRÉ</span>
+                        <span class="text-[10px] text-red-400">Date invalide</span>
+                    </div>
+                `;
+                container.classList.add('bg-red-50', 'border-red-100');
+                container.classList.remove('bg-white', 'border-gray-100');
+
+                // Mise à jour du texte d'instruction
+                document.getElementById('instructionText').textContent = "Ce code n'est pas valable pour la date d'aujourd'hui.";
+                document.getElementById('instructionText').classList.add('text-red-400');
+
+                // Mise à jour des indicateurs en bas (passage au rouge)
+                document.getElementById('statusText').textContent = "Non Valide";
+                document.getElementById('statusText').classList.add('text-red-500');
+                
+                const dot = document.getElementById('statusDot');
+                dot.classList.remove('bg-green-500');
+                dot.classList.add('bg-red-500');
+                
+                const ping = document.getElementById('statusPing');
+                ping.classList.remove('bg-green-400');
+                ping.classList.add('bg-red-400');
+            }
+        });
+    </script>
+</body>
+</html>
