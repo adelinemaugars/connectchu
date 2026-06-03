@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test bouton retour</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:#F5F9FC;
+}
+
+.back-button{
+    position:fixed;
+    top:12px;
+    left:12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:#4b5563;
+    background:white;
+    border:none;
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:14px;
+    font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,0.10);
+    cursor:pointer;
+}
+
+.card{
+    max-width:500px;
+    margin:70px auto;
+    background:white;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.result{
+    margin-top:15px;
+    padding:15px;
+    border-radius:12px;
+    background:#EEF7EC;
+}
+</style>
+</head>
+
+<body>
+
+<button class="back-button" onclick="retour()">
+    ← Retour
+</button>
+
+<div class="card">
+
+    <h2>Test du bouton Retour</h2>
+
+    <p>
+        Cette page permet de vérifier si le bouton reproduit le même comportement
+        que le swipe retour du navigateur.
+    </p>
+
+    <div class="result" id="info">
+        Historique détecté : <span id="historyLength"></span>
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("historyLength").innerHTML = window.history.length;
+
+function retour() {
+
+    console.log("history.length =", window.history.length);
+
+    history.back();
+
+}
+
+</script>
+
+</body>
+</html>
