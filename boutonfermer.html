@@ -1,30 +1,24 @@
-<button onclick="retourQuestionnaire()"
-        style="
-        position:fixed;
-        top:12px;
-        left:12px;
-        display:flex;
-        align-items:center;
-        gap:6px;
-        color:#4b5563;
-        font-size:14px;
-        font-weight:600;
-        padding:10px 14px;
-        background:white;
-        border:none;
-        border-radius:10px;
-        box-shadow:0 1px 3px rgba(0,0,0,0.10);
-        z-index:999;
-        cursor:pointer;">
-    ← Retour
+<button onclick="closeAppWindow()" class="back-button">
+    ← Fermer
 </button>
 
 <script>
-function retourQuestionnaire() {
+function closeAppWindow() {
 
-    window.location.replace(
-      "https://patient.chu-angers.fr/connect-chu/#!/app/forms/1899764"
-    );
+    // Tentative 1
+    window.open('', '_self');
 
+    // Tentative 2
+    window.close();
+
+    // Tentative 3
+    setTimeout(function() {
+        history.back();
+    }, 200);
+
+    // Tentative 4
+    setTimeout(function() {
+        history.go(-1);
+    }, 400);
 }
 </script>
