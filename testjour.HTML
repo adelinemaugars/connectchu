@@ -4,54 +4,99 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Orientation temporelle</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #F5F9FC;
+    padding: 14px;
+    color: #111827;
+}
+
+.back-button {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 14px;
+    background: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.10);
+    z-index: 999;
+    cursor: pointer;
+}
+
+.back-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.card {
+    max-width: 480px;
+    margin: 55px auto 0 auto;
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+label {
+    font-weight: 600;
+}
+
+.validate-button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #275091;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.result {
+    display: none;
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 12px;
+    background: #EEF7EC;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #275091;
+}
+</style>
 </head>
 
-<body style="margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#F5F9FC;padding:14px;color:#111827">
+<body>
 
-<!-- Bouton Retour -->
-<div style="
-    position:fixed;
-    top:12px;
-    left:12px;
-    z-index:999;
-">
+<button onclick="closeAppWindow()" class="back-button">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+    Retour
+</button>
 
-    <a href="javascript:history.back();"
-       style="
-          display:flex;
-          align-items:center;
-          gap:6px;
-          background:#FFFFFF;
-          color:#4B5563;
-          text-decoration:none;
-          padding:10px 14px;
-          border-radius:10px;
-          font-size:14px;
-          font-weight:600;
-          box-shadow:0 1px 3px rgba(0,0,0,0.10);
-       ">
-
-        <svg xmlns="http://www.w3.org/2000/svg"
-             width="18"
-             height="18"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor">
-
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7" />
-
-        </svg>
-
-        Retour
-
-    </a>
-
-</div>
-
-<div style="max-width:480px;margin:55px auto 0 auto;background:#FFFFFF;border-radius:18px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,0.08)">
+<div class="card">
 
   <h2 style="margin:0 0 10px 0;color:#275091;font-size:22px">
     📅 Orientation temporelle
@@ -61,59 +106,51 @@
     Sans regarder votre téléphone ou un calendrier, indiquez la date complète d'aujourd'hui.
   </p>
 
-  <label style="font-weight:600">Année</label>
-  <input id="annee" type="number"
-         style="width:100%;padding:12px;margin-top:5px;margin-bottom:10px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px;font-size:15px">
+  <label>Année</label>
+  <input id="annee" type="number" placeholder="Exemple : 2026">
 
-  <label style="font-weight:600">Jour de la semaine</label>
-  <select id="jourSemaine"
-          style="width:100%;padding:12px;margin-top:5px;margin-bottom:10px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px;font-size:15px">
-      <option value="">Choisir</option>
-      <option>Lundi</option>
-      <option>Mardi</option>
-      <option>Mercredi</option>
-      <option>Jeudi</option>
-      <option>Vendredi</option>
-      <option>Samedi</option>
-      <option>Dimanche</option>
+  <label>Jour de la semaine</label>
+  <select id="jourSemaine">
+    <option value="">Choisir</option>
+    <option>Lundi</option>
+    <option>Mardi</option>
+    <option>Mercredi</option>
+    <option>Jeudi</option>
+    <option>Vendredi</option>
+    <option>Samedi</option>
+    <option>Dimanche</option>
   </select>
 
-  <label style="font-weight:600">Mois</label>
-  <select id="mois"
-          style="width:100%;padding:12px;margin-top:5px;margin-bottom:10px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px;font-size:15px">
-      <option value="">Choisir</option>
-      <option>Janvier</option>
-      <option>Février</option>
-      <option>Mars</option>
-      <option>Avril</option>
-      <option>Mai</option>
-      <option>Juin</option>
-      <option>Juillet</option>
-      <option>Août</option>
-      <option>Septembre</option>
-      <option>Octobre</option>
-      <option>Novembre</option>
-      <option>Décembre</option>
+  <label>Mois</label>
+  <select id="mois">
+    <option value="">Choisir</option>
+    <option>Janvier</option>
+    <option>Février</option>
+    <option>Mars</option>
+    <option>Avril</option>
+    <option>Mai</option>
+    <option>Juin</option>
+    <option>Juillet</option>
+    <option>Août</option>
+    <option>Septembre</option>
+    <option>Octobre</option>
+    <option>Novembre</option>
+    <option>Décembre</option>
   </select>
 
-  <label style="font-weight:600">Jour du mois</label>
-  <input id="jourMois" type="number"
-         style="width:100%;padding:12px;margin-top:5px;margin-bottom:15px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px;font-size:15px">
+  <label>Jour du mois</label>
+  <input id="jourMois" type="number" placeholder="Exemple : 3">
 
-  <button onclick="verifierDate()"
-          style="width:100%;padding:14px;border:none;border-radius:12px;background:#275091;color:white;font-size:16px;font-weight:700">
-      Valider
+  <button onclick="verifierDate()" class="validate-button">
+    Valider
   </button>
 
-  <div id="resultat"
-       style="display:none;margin-top:15px;padding:14px;border-radius:12px;background:#EEF7EC;text-align:center;font-size:18px;font-weight:700;color:#275091">
-  </div>
+  <div id="resultat" class="result"></div>
 
 </div>
 
 <script>
 function verifierDate() {
-
   var aujourdHui = new Date();
 
   var jours = [
@@ -127,27 +164,44 @@ function verifierDate() {
   ];
 
   var mois = [
-    "Janvier","Février","Mars","Avril","Mai","Juin",
-    "Juillet","Août","Septembre","Octobre","Novembre","Décembre"
+    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
   ];
 
   var score = 0;
 
-  if (parseInt(document.getElementById("annee").value) === aujourdHui.getFullYear())
-      score++;
+  if (parseInt(document.getElementById("annee").value) === aujourdHui.getFullYear()) {
+    score++;
+  }
 
-  if (document.getElementById("jourSemaine").value === jours[aujourdHui.getDay()])
-      score++;
+  if (document.getElementById("jourSemaine").value === jours[aujourdHui.getDay()]) {
+    score++;
+  }
 
-  if (document.getElementById("mois").value === mois[aujourdHui.getMonth()])
-      score++;
+  if (document.getElementById("mois").value === mois[aujourdHui.getMonth()]) {
+    score++;
+  }
 
-  if (parseInt(document.getElementById("jourMois").value) === aujourdHui.getDate())
-      score++;
+  if (parseInt(document.getElementById("jourMois").value) === aujourdHui.getDate()) {
+    score++;
+  }
 
-  document.getElementById("resultat").style.display = "block";
-  document.getElementById("resultat").innerHTML =
-      "Score orientation : <strong>" + score + " / 4</strong>";
+  var resultat = document.getElementById("resultat");
+  resultat.style.display = "block";
+  resultat.innerHTML = "Score orientation : <strong>" + score + " / 4</strong>";
+}
+
+function closeAppWindow() {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ action: "close" }, "*");
+  }
+
+  if (window.history.length > 1) {
+    history.back();
+    return;
+  }
+
+  window.close();
 }
 </script>
 
