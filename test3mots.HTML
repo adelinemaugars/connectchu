@@ -110,5 +110,38 @@ function calculerScore() {
 }
 </script>
 
+<div style="text-align:center;margin-top:20px">
+
+    <button onclick="fermerPage()"
+            style="background:#E5E7EB;
+                   color:#374151;
+                   border:none;
+                   border-radius:10px;
+                   padding:12px 24px;
+                   font-weight:700;
+                   cursor:pointer">
+        ← Fermer
+    </button>
+
+</div>
+
+<script>
+function fermerPage() {
+    history.back();
+}
+</script>
+
 </body>
 </html>
+
+<script>
+function fermerPage() {
+
+    if (window.history.length > 1) {
+        history.back();
+    } else {
+        window.close();
+    }
+
+}
+</script>
