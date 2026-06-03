@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orientation temporelle</title>
+</head>
+
+<body style="margin:0;font-family:Segoe UI,Arial,sans-serif;background:#F5F9FC;padding:14px">
+
+<div style="max-width:480px;margin:auto;background:#FFFFFF;border-radius:18px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,0.08)">
+
+  <h2 style="margin:0 0 10px 0;color:#275091">
+    📅 Orientation temporelle
+  </h2>
+
+  <p style="font-size:15px;color:#4B5563;line-height:1.5">
+    Sans regarder votre téléphone ou un calendrier, indiquez la date complète d'aujourd'hui.
+  </p>
+
+  <div style="margin-top:15px">
+
+    <label style="font-weight:600">Année</label>
+    <input id="annee" type="number"
+           style="width:100%;padding:12px;margin-top:5px;margin-bottom:10px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px">
+
+    <label style="font-weight:600">Jour de la semaine</label>
+    <select id="jourSemaine"
+            style="width:100%;padding:12px;margin-top:5px;margin-bottom:10px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px">
+      <option value="">Choisir</option>
+      <option>Lundi</option>
+      <option>Mardi</option>
+      <option>Mercredi</option>
+      <option>Jeudi</option>
+      <option>Vendredi</option>
+      <option>Samedi</option>
+      <option>Dimanche</option>
+    </select>
+
+    <label style="font-weight:600">Mois</label>
+    <select id="mois"
+            style="width:100%;padding:12px;margin-top:5px;margin-bottom:10px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px">
+      <option value="">Choisir</option>
+      <option>Janvier</option>
+      <option>Février</option>
+      <option>Mars</option>
+      <option>Avril</option>
+      <option>Mai</option>
+      <option>Juin</option>
+      <option>Juillet</option>
+      <option>Août</option>
+      <option>Septembre</option>
+      <option>Octobre</option>
+      <option>Novembre</option>
+      <option>Décembre</option>
+    </select>
+
+    <label style="font-weight:600">Jour du mois</label>
+    <input id="jourMois" type="number"
+           style="width:100%;padding:12px;margin-top:5px;margin-bottom:15px;box-sizing:border-box;border:1px solid #D1D5DB;border-radius:10px">
+
+    <button onclick="verifierDate()"
+            style="width:100%;padding:14px;border:none;border-radius:12px;background:#275091;color:white;font-size:16px;font-weight:700">
+      Valider
+    </button>
+
+    <div id="resultat"
+         style="display:none;margin-top:15px;padding:14px;border-radius:12px;background:#EEF7EC;text-align:center;font-size:18px;font-weight:700;color:#275091">
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+function verifierDate() {
+
+  const aujourdHui = new Date();
+
+  const annee = aujourdHui.getFullYear();
+
+  const jours = [
+    "Dimanche",
+    "Lundi",
+    "Mardi",
+    "Mercredi",
+    "Jeudi",
+    "Vendredi",
+    "Samedi"
+  ];
+
+  const mois = [
+    "Janvier","Février","Mars","Avril","Mai","Juin",
+    "Juillet","Août","Septembre","Octobre","Novembre","Décembre"
+  ];
+
+  let score = 0;
+
+  if (parseInt(document.getElementById("annee").value) === annee)
+    score++;
+
+  if (document.getElementById("jourSemaine").value === jours[aujourdHui.getDay()])
+    score++;
+
+  if (document.getElementById("mois").value === mois[aujourdHui.getMonth()])
+    score++;
+
+  if (parseInt(document.getElementById("jourMois").value) === aujourdHui.getDate())
+    score++;
+
+  let resultat = document.getElementById("resultat");
+
+  resultat.style.display = "block";
+
+  resultat.innerHTML =
+    "Score orientation : " + score + " / 4";
+
+}
+
+</script>
+
+</body>
+</html>
