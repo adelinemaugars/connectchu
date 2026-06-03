@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test mémoire ICOPE</title>
+</head>
+
+<body style="margin:0;font-family:Segoe UI,Arial,sans-serif;background:#F5F9FC;padding:14px;color:#111827">
+
+<button onclick="goBack()" style="
+  position:fixed;top:12px;left:12px;z-index:999;
+  display:flex;align-items:center;gap:6px;
+  background:#FFFFFF;color:#4b5563;
+  border:none;border-radius:10px;
+  padding:10px 14px;
+  font-family:'Segoe UI',Arial,sans-serif;
+  font-size:14px;font-weight:600;
+  box-shadow:0 1px 3px rgba(0,0,0,0.10);
+  cursor:pointer;">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+  </svg>
+  Retour
+</button>
+
+<div style="max-width:480px;margin:55px auto 0 auto;background:#FFFFFF;border-radius:18px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,0.08)">
+
+  <h2 style="margin:0 0 8px 0;color:#275091;font-size:22px">
+    Test mémoire ICOPE
+  </h2>
+
+  <p style="margin:0 0 14px 0;font-size:15px;line-height:1.4;color:#4B5563">
+    Écoutez attentivement les 3 mots. La lecture ne peut être lancée qu'une seule fois.
+  </p>
+
+  <div id="mots" style="background:#EEF7EC;border-radius:12px;padding:14px;text-align:center;font-size:22px;font-weight:800;color:#275091;margin-bottom:12px">
+    Fleur • Drapeau • Chaise
+  </div>
+
+  <button id="btnLecture"
+          onclick="demarrerTest()"
+          style="width:100%;padding:14px;border:none;border-radius:12px;background:#275091;color:#FFFFFF;font-size:16px;font-weight:700">
+    Écouter les mots
+  </button>
+
+  <div id="zoneReponse" style="display:none;margin-top:16px">
+
+    <p style="margin:0 0 10px 0;font-size:15px;color:#374151">
+      Quels étaient les 3 mots ?
+    </p>
+
+    <input id="mot1" placeholder="Mot 1" style="width:100%;box-sizing:border-box;padding:12px;margin-bottom:8px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px">
+    <input id="mot2" placeholder="Mot 2" style="width:100%;box-sizing:border-box;padding:12px;margin-bottom:8px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px">
+    <input id="mot3" placeholder="Mot 3" style="width:100%;box-sizing:border-box;padding:12px;margin-bottom:12px;border:1px solid #D1D5DB;border-radius:10px;font-size:15px">
+
+    <button onclick="calculerScore()"
+            style="width:100%;padding:14px;border:none;border-radius:12px;background:#17AADD;color:#FFFFFF;font-size:16px;font-weight:700">
+      Valider
+    </button>
+
+    <div id="resultat" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#EEF7EC;text-align:center;font-size:20px;font-weight:800;color:#275091">
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+var lectureDejaLancee = false;
+
+function demarrerTest() {
+  if (lectureDejaLancee) return;
+
+  lectureDejaLancee = true;
+
+  var bouton = document.getElementById("btnLecture");
+  bouton.disabled = true;
+  bouton.innerHTML = "Mots lus";
+  bouton.style.background = "#9CA3AF";
+  bouton.style.cursor = "not-allowed";
+
+  var parole = new SpeechSynthesisUtterance("Fleur. Drapeau. Chaise.");
+  parole.lang = "fr-FR";
+  parole.rate = 0.8;
+  parole.pitch = 1;
+  window.speechSynthesis.speak(parole);
+
+  setTimeout(function() {
+    document.getElementById("mots").style.display = "none";
+    document.getElementById("zoneReponse").style.display = "block";
+  }, 6000);
+}
+
+function nettoyer(texte) {
+  return texte
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+function calculerScore() {
+  var attendus = ["fleur", "drapeau", "chaise"];
+  var reponses = [
+    nettoyer(document.getElementById("mot1").value),
+    nettoyer(document.getElementById("mot2").value),
+    nettoyer(document.getElementById("mot3").value)
+  ];
+
+  var score = 0;
+  for (var i = 0; i < attendus.length; i++) {
+    if (reponses.indexOf(attendus[i]) !== -1) score++;
+  }
+
+  var resultat = document.getElementById("resultat");
+  resultat.style.display = "block";
+  resultat.innerHTML = "Score mémoire : " + score + " / 3";
+}
+
+function goBack() {
+
+  // ── Iframe parent (page embarquée) ──────────────────
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ action: "close" }, "*");
+  }
+
+  // ── Android natif (WebView / TWA) ──────────────────
+  if (typeof Android !== 'undefined' && Android && Android.goBack) {
+    Android.goBack();
+    return;
+  }
+
+  // ── iOS natif (WKWebView / Swift bridge) ───────────
+  if (window.webkit
+      && window.webkit.messageHandlers
+      && window.webkit.messageHandlers.goBack) {
+    window.webkit.messageHandlers.goBack.postMessage(null);
+    return;
+  }
+
+  // ── iOS Safari / Chrome iOS — URL scheme custom ────
+  // Remplace "monapp" par le scheme de ton app si besoin
+  // var iframe = document.createElement("iframe");
+  // iframe.style.display = "none";
+  // iframe.src = "monapp://close";
+  // document.body.appendChild(iframe);
+  // setTimeout(function() { document.body.removeChild(iframe); }, 500);
+
+  // ── Historique navigateur (tous navigateurs) ───────
+  if (history.length > 1) {
+    history.back();
+    return;
+  }
+
+  // ── Fenêtre ouverte par script ─────────────────────
+  if (window.opener) {
+    window.close();
+    return;
+  }
+
+  // ── Repli final ────────────────────────────────────
+  window.close();
+}
+</script>
+
+</body>
+</html>
