@@ -1,24 +1,3 @@
-<button onclick="closeAppWindow()" class="back-button">
-    ← Fermer
+<button onclick="window.close()">
+    Fermer
 </button>
-
-<script>
-function closeAppWindow() {
-
-    // Tentative 1
-    window.open('', '_self');
-
-    // Tentative 2
-    window.close();
-
-    // Tentative 3
-    setTimeout(function() {
-        history.back();
-    }, 200);
-
-    // Tentative 4
-    setTimeout(function() {
-        history.go(-1);
-    }, 400);
-}
-</script>
