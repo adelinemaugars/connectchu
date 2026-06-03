@@ -1,3 +1,19 @@
-<button onclick="window.close()">
-    Fermer
+<button onclick="toutFermer()"
+        style="width:100%;padding:14px;border:none;border-radius:12px;background:#DC2626;color:white;font-size:16px;font-weight:700">
+  Fermer
 </button>
+
+<script>
+function toutFermer() {
+  window.open('', '_self');
+  window.close();
+
+  setTimeout(function() {
+    history.back();
+  }, 200);
+
+  setTimeout(function() {
+    document.body.innerHTML = "";
+  }, 500);
+}
+</script>
