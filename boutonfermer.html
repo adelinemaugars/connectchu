@@ -1,34 +1,33 @@
-<button onclick="closeAppWindow()" class="back-button">
+<!-- Bouton Retour -->
+<button onclick="goBack()"
+  style="display:flex;align-items:center;gap:8px;
+         padding:12px 24px;font-size:16px;cursor:pointer;">
   ← Retour
 </button>
 
-<style>
-.back-button{
-  position:fixed;
-  top:12px;
-  left:12px;
-  z-index:999;
-  background:white;
-  color:#4b5563;
-  border:none;
-  border-radius:10px;
-  padding:10px 14px;
-  font-weight:600;
-  box-shadow:0 1px 3px rgba(0,0,0,0.15);
-}
-</style>
-
 <script>
-function closeAppWindow() {
-  window.open('', '_self');
-  window.close();
+function goBack() {
 
-  setTimeout(function() {
+  // 1. Priorité : historique du navigateur
+  if (history.length > 1) {
     history.back();
-  }, 300);
+    return;
+  }
 
-  setTimeout(function() {
-    document.body.innerHTML = "";
-  }, 700);
+  // 2. Ferme la fenêtre si ouverte par script
+  if (window.opener) {
+    window.close();
+    return;
+  }
+
+  // 3. Chrome mobile (PWA / TWA / Custom Tab)
+  // Tente de fermer via l'API Android
+  if (typeof Android !== 'undefined' && Android.goBack) {
+    Android.goBack();
+    return;
+  }
+
+  // 4. Repli final
+  window.close();
 }
 </script>
